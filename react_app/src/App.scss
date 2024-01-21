@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap");
+@import "./style-config/mixins.scss";
+@import "./style-config/variable.scss";
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "DM Sans", sans-serif;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+p {
+  @include typography(18px, 400, 24px);
+}
+
+h2 {
+  @include typography(42px, 700, 1.2);
+}
+
+h3 {
+  @include typography(26px, 500, 1.2);
+}
+
+h2 {
+  @include typography(22px, 500, 1.2);
+}
