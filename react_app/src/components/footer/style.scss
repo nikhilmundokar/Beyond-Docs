@@ -9,9 +9,9 @@
   align-items: center;
   width: 100%;
   .footer-logo {
-    width: 120px;
+    width: 250px;
     @include small-screen {
-      width: 150px;
+      width: 200px;
     }
     img {
       display: block;

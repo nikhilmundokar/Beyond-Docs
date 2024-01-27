@@ -2,11 +2,14 @@
 @import "../../../style-config/variable.scss";
 
 .section {
-  padding: 100px 0;
+  padding: 50px 0;
   position: relative;
   display: flex;
   justify-content: center;
   color: $white;
+  @include large-screen {
+    padding: 100px 0;
+  }
 
   &.black-dark {
     background-color: $black;

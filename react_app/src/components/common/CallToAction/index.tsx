@@ -1,18 +1,42 @@
 import React, { MouseEventHandler, ReactNode } from "react";
+import { Link } from "react-router-dom";
 import "./style.scss";
-import Arrow from "../Arrow";
+import { useAuth } from "../../utils/context";
 
 interface CallToActionProps {
   text: string;
-  icon?: ReactNode;
+  to?: string;
+  type?: string;
   action?: MouseEventHandler<HTMLDivElement>;
 }
 
-const CallToAction: React.FC<CallToActionProps> = ({ text, icon, action }) => {
+const CallToAction: React.FC<CallToActionProps> = ({
+  text,
+  to,
+  type,
+  action,
+}) => {
+  const { login } = useAuth();
+
+  if (to) {
+    return (
+      <Link to={to} className={`call-to-action ${type ? type : `border`}`}>
+        <span className="text">{text}</span>
+      </Link>
+    );
+  }
+
   return (
-    <div className="call-to-action" onClick={action}>
+    <div
+      className={`call-to-action ${type ? type : `border`}`}
+      onClick={(event) => {
+        login();
+        if (action) {
+          action(event);
+        }
+      }}
+    >
       <span className="text">{text}</span>
-      {icon ? <div className="icon">{icon}</div> : <Arrow />}
     </div>
   );
 };

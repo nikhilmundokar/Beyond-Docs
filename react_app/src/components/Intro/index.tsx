@@ -3,7 +3,7 @@ import "../../style-config/variable.scss";
 import IntroContent from "./intro-content";
 import React from "react";
 
-function index() {
+function Intro() {
   return (
     <div id="home" className="Intro-section">
       <div className="vector-bg" id="parallax"></div>
@@ -15,4 +15,4 @@ function index() {
   );
 }
 
-export default index;
+export default Intro;

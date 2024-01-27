@@ -4,69 +4,110 @@
 .intro-content {
   flex-grow: 1;
   display: flex;
-  align-items: center;
-  min-height: 650px;
   background-image: url("../../../images/background.png");
   background-size: cover;
   background-position: center;
   color: $white;
-  overflow: visible; // Add overflow: hidden to hide the overflow of the phone image
-
+  @include large-screen {
+    height: calc(100vh - 80px);
+    transition: height 0.3s ease;
+  }
+  @include xxlarge-screen {
+    height: calc(80vh - 80px);
+  }
   .layout {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
     width: 100%;
-    margin: 0;
-    position: relative; // Add position: relative to the layout container
-
-    .left-col {
-      width: 60%;
-      display: flex;
-      position: relative;
-      align-items: left;
-      .phone {
-        background-image: url("../../../images/smart_phone.png");
-        background-size: cover;
-        background-position: left;
-        width: 100%;
-        min-height: 630px;
-        @include large-screen {
-          width: 100;
-          height: fit-content;
-        }
-      }
+    position: relative;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: column-reverse;
+    margin: 0 auto;
+    @include large-screen {
+      flex-direction: row;
+      max-width: 1200px;
     }
-
-    .right-col {
-      width: 40%;
+    .left-col {
+      z-index: 1;
+      width: 100%;
       padding: 40px;
+      display: flex;
       flex-direction: column;
       justify-content: center;
-      align-items: flex-start;
+      align-items: center;
+      text-align: center;
+      margin: 0 auto;
+      @include large-screen {
+        position: relative;
+        left: 50px;
+        width: 50%;
+      }
+      @include xlarge-screen {
+        left: 0;
+      }
 
       .title {
-        margin: 20px 0;
-
-        .small-text {
-          @include typography(24px, 400, 28px);
-          display: flex;
-          align-items: center;
-
-          .icon {
-            margin-left: 10px;
-          }
-        }
-
-        .big-text {
-          @include typography(36px, 400, 48px);
+        margin-bottom: 20px;
+        @include typography(80px, 700, 1);
+        @include large-screen {
+          font-size: 160px;
         }
       }
 
       p {
-        @include typography(16px, 400, 20px);
-        margin: 20px 0;
+        margin: 20px;
         width: 80%;
+        @include typography(14px, 400, 20px);
+        @include medium-screen {
+          @include typography(16px, 400, 20px);
+          max-width: 60%;
+        }
+        @include large-screen {
+          @include typography(16px, 400, 20px);
+          max-width: 80%;
+        }
+      }
+    }
+    .ctas {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .right-col {
+      padding: 0;
+      margin: 0;
+      margin-top: 20px;
+      width: 100%;
+      display: flex;
+      position: relative;
+      justify-content: center;
+      align-items: center;
+      @include large-screen {
+        width: 55%;
+        flex-direction: row;
+      }
+      .banner {
+        position: relative;
+        z-index: 9;
+        margin-bottom: 20px;
+        width: 400px;
+        @include medium-screen {
+          width: 400px;
+          transition: width 0.3s ease;
+        }
+        @include large-screen {
+          width: 600px;
+          margin-right: 60px;
+          margin-top: 50px;
+          margin-bottom: 0;
+        }
+        @include xlarge-screen {
+          width: 700px;
+          margin-right: 0;
+          margin-top: 0px;
+        }
       }
     }
   }

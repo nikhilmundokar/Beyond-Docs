@@ -1,20 +1,30 @@
+import React from "react";
+import Home from "./components/home";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Welcome from "./components/welcome";
+import UploadDocument from "./components/upload-document";
+import Dashboard from "./components/dashboard";
 import Navbar from "./components/Navbar";
-import Intro from "./components/Intro";
-import "./App.scss";
-import BlockChain from "./components/blockchain";
-import About from "./components/about";
 import ContactUs from "./components/contactus";
 import Footer from "./components/footer";
+import { AuthProvider } from "./components/utils/context";
 
 function App() {
   return (
     <div>
-      <Navbar />
-      <Intro />
-      <About />
-      <BlockChain />
-      <ContactUs />
-      <Footer />
+      <Router>
+        <AuthProvider>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/welcome/" element={<Welcome user="Nikhil" />} />
+            <Route path="/upload/" element={<UploadDocument />} />
+            <Route path="/dashboard/" element={<Dashboard />} />
+            <Route path="/contact/" element={<ContactUs />} />
+          </Routes>
+          <Footer />
+        </AuthProvider>
+      </Router>
     </div>
   );
 }

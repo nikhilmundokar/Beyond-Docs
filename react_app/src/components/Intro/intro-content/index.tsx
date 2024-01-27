@@ -1,40 +1,35 @@
 import "./style.scss";
-
-import CallToAction from "../../common/CallToAction";
-import { FaArrowTurnDown } from "react-icons/fa6";
-import TransparentBox from "../../common/transparent-box";
-import { BsAwardFill } from "react-icons/bs";
-import { FaUser } from "react-icons/fa";
-import React from "react";
+import phone from "../../../images/smart_phone.png";
+import CallToAction from "../../common/calltoaction";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function IntroContent() {
+  const [scrolled, setScrolled] = useState(false);
+  const handleScroll = () => {
+    const offset = window.scrollY;
+    if (offset > 20) {
+      setScrolled(true);
+    } else {
+      setScrolled(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <div className="intro-content">
       <div className="layout">
         <div className="left-col">
-          <div className="phone"> </div>
-          {/* <TransparentBox
-            type="horizontal"
-            text="Access Anytime Anywhere"
-            icon={FaUser}
-          />
-          <TransparentBox
-            type="vertical"
-            text="Secure Storage For All Documents"
-            icon={BsAwardFill}
-          /> */}
-        </div>
-
-        <div className="right-col">
-          <h1 className="title">
-            <span className="small-text">
-              <span className="text">Welcome To </span>
-              <span className="icon">
-                <FaArrowTurnDown />
-              </span>
-            </span>
-            <span className="big-text">BEYOND DOCS</span>
+          <h1 className={`title ${scrolled ? "animate-border" : ""}`}>
+            BEYOND DOCS
           </h1>
+
           <p>
             {" "}
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore cum,
@@ -42,7 +37,18 @@ function IntroContent() {
             maxime earum sint nam consequatur soluta? Laborum, doloremque
             deserunt. Velit sapiente ipsa inventore.
           </p>
-          <CallToAction text="Login" />
+          <div className="ctas">
+            <Link to="/welcome" className="cta-link">
+              <CallToAction text="Signup" type="fill" />
+            </Link>
+            <Link to="/welcome" className="cta-link">
+              <CallToAction text="Login" type="border" />
+            </Link>
+          </div>
+        </div>
+
+        <div className="right-col">
+          <img className="banner" src={phone} alt="phone" />
         </div>
       </div>
     </div>

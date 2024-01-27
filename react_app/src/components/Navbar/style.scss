@@ -3,40 +3,118 @@
 
 .top-navigation-bar {
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
   background-color: $black;
   color: $white;
-  height: 80px;
-
-  .app-logo {
-    width: 250px;
-
-    img {
-      width: 100%;
-      display: block;
-    }
+  z-index: 99;
+  display: flex;
+  justify-content: space-evenly;
+  @include large-screen {
+    padding: 0 40px;
   }
-
-  .navigation {
+  .navigation-content {
+    width: 80%;
     display: flex;
     align-items: center;
-    color: $white;
-    .navigation-item {
-      @include typography(16px, 400, 1);
-      margin-left: 20px;
-      padding: 5px;
-      box-shadow: inset 0 0 0 0 $white;
-      transition: color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-      cursor: pointer;
-      &:hover {
-        box-shadow: inset 200px 0 0 0 $white;
-        color: $black;
+    justify-content: space-evenly;
+    height: 50px;
+    @include large-screen {
+      height: 80px;
+      width: 1200px;
+    }
+    .left-col {
+      width: 50%;
+
+      .app-logo {
+        width: 170px;
+        @include medium-screen {
+          width: 250px;
+        }
+        img {
+          width: 100%;
+          display: block;
+        }
       }
     }
-    .call-to-action {
-      margin-left: 20px;
+    .right-col {
+      width: 50%;
+      gap: 25px;
+      .navigation {
+        display: flex;
+        align-items: center;
+        justify-content: end;
+        color: $white;
+        @include medium-screen {
+          justify-content: space-evenly;
+        }
+        .navigation-item {
+          @include typography(14px, 400, 1);
+          display: none;
+          @include medium-screen {
+            display: flex;
+          }
+          padding: 5px;
+          box-shadow: inset 0 0 0 0 $white;
+          transition: color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+          cursor: pointer;
+          &:hover {
+            box-shadow: inset 200px 0 0 0 $white;
+            color: $black;
+          }
+        }
+
+        .avatar-icon {
+          height: 30px;
+          width: 30px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          position: relative;
+          z-index: 1;
+          transition: all ease 500ms;
+          color: $white;
+          overflow: hidden;
+
+          svg {
+            font-size: 30px;
+            z-index: 2;
+          }
+          &:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: $cyan;
+            z-index: 0;
+            transform: translateX(-100%);
+            transition: transform ease 500ms,
+              background-color 300ms cubic-bezier(0.55, 0.055, 0.675, 0.19);
+          }
+
+          &:hover {
+            &::before {
+              transform: translateX(0);
+            }
+          }
+        }
+      }
     }
+  }
+  &.sticky-navbar {
+    position: sticky;
+    transform: translateY(-80px);
+    top: 0;
+    animation: stickyNavbar 0.3s ease forwards;
+  }
+}
+
+@keyframes stickyNavbar {
+  0% {
+    transform: translateY(-80px);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
