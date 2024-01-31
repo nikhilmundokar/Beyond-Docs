@@ -3,6 +3,7 @@ import phone from "../../../images/smart_phone.png";
 import CallToAction from "../../common/calltoaction";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Login from "../../upload-document/login";
 
 function IntroContent() {
   const [scrolled, setScrolled] = useState(false);
@@ -41,12 +42,12 @@ function IntroContent() {
             <Link to="/welcome" className="cta-link">
               <CallToAction text="Signup" type="fill" />
             </Link>
-            <Link to="/welcome" className="cta-link">
-              <CallToAction text="Login" type="border" />
+            <Link to="/login" className="cta-link">
+              <CallToAction text="Login" to="/login" type="border" />
             </Link>
           </div>
         </div>
-
+    
         <div className="right-col">
           <img className="banner" src={phone} alt="phone" />
         </div>

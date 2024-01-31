@@ -19,6 +19,7 @@ function Welcome(props: WelcomeProps) {
         <div className="title">Welcome To Beyond Docs {user} </div>
         <div className="ctas">
           <CallToAction text="Upload Document" type="fill" to="/upload" />
+          <CallToAction text="Validate Document" type="border" to="/retrive" />
           <CallToAction text="View Dashboard" type="border" to="dashboard" />
         </div>
       </div>

@@ -5,6 +5,7 @@ import { useAuth } from "../utils/context";
 import CallToAction from "../common/calltoaction";
 import logo from "../../images/BEYOND-DOCS.png";
 import { Link } from "react-router-dom";
+import Login from "../upload-document/login";
 import "./style.scss";
 function Navbar() {
   const { isLoggedIn, login, logout } = useAuth();
@@ -48,7 +49,7 @@ function Navbar() {
           <div className="navigation">
             {isLoggedIn ? (
               <>
-                <span className="navigation-item">Upload Document</span>
+                <span className="navigation-item" to="/upload">Upload Document</span>
                 <span className="navigation-item">Dashboard</span>
                 <span className="navigation-item">Help</span>
                 <div className="avatar-icon">
@@ -75,8 +76,8 @@ function Navbar() {
                 >
                   Contact
                 </span>
-                <Link to="/welcome" className="cta-link">
-                  <CallToAction text="login" type="fill" />
+                <Link to="/login" className="cta-link">
+                  <CallToAction text="login"  type="fill" />
                 </Link>
               </>
             )}
