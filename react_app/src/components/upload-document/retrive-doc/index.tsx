@@ -1,6 +1,6 @@
-import React, { useState, ChangeEvent } from 'react';
-import axios from 'axios';
-import VerifySignature from './verify';
+import React, { useState, ChangeEvent } from "react";
+import axios from "axios";
+import VerifySignature from "../verify";
 import {
   CContainer,
   CRow,
@@ -9,10 +9,10 @@ import {
   CCardBody,
   CButton,
   CAlert, // Import CAlert from CoreUI
-} from '@coreui/react';
+} from "@coreui/react";
 
 const RetrieveFileFromIPFS: React.FC = () => {
-  const [ipfsHash, setIpfsHash] = useState<string>('');
+  const [ipfsHash, setIpfsHash] = useState<string>("");
   const [isSignatureValid, setIsSignatureValid] = useState<boolean>(false);
 
   const handleHashChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -28,17 +28,24 @@ const RetrieveFileFromIPFS: React.FC = () => {
   const downloadFile = async () => {
     if (isSignatureValid) {
       try {
-        const response = await axios.get(`https://gateway.pinata.cloud/ipfs/${ipfsHash}`, {
-          responseType: 'arraybuffer', // Specify response type as arraybuffer
+        const response = await axios.get(
+          `https://gateway.pinata.cloud/ipfs/${ipfsHash}`,
+          {
+            responseType: "arraybuffer", // Specify response type as arraybuffer
+          }
+        );
+
+        const contentDisposition = response.headers["content-disposition"];
+        const fileNameMatch =
+          contentDisposition &&
+          contentDisposition.match(/filename="(.+)"(?:;|$)/);
+        const fileName = fileNameMatch ? fileNameMatch[1] : "downloadedFile";
+
+        const blob = new Blob([response.data], {
+          type: response.headers["content-type"],
         });
-
-        const contentDisposition = response.headers['content-disposition'];
-        const fileNameMatch = contentDisposition && contentDisposition.match(/filename="(.+)"(?:;|$)/);
-        const fileName = fileNameMatch ? fileNameMatch[1] : 'downloadedFile';
-
-        const blob = new Blob([response.data], { type: response.headers['content-type'] });
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = fileName;
         document.body.appendChild(a);
@@ -46,15 +53,15 @@ const RetrieveFileFromIPFS: React.FC = () => {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
       } catch (error) {
-        console.error('Error downloading file:', error);
+        console.error("Error downloading file:", error);
       }
     } else {
-      console.error('Signature is not valid. File download aborted.');
+      console.error("Signature is not valid. File download aborted.");
     }
   };
 
   return (
-    <div className='main-content'>
+    <div className="main-content">
       <CContainer className="retrieve-file-container">
         <CRow className="justify-content-center">
           <CCol md="6">
@@ -72,7 +79,9 @@ const RetrieveFileFromIPFS: React.FC = () => {
                 </CButton>
 
                 {/* Include the VerifySignature component and pass handleSignatureValidation */}
-                <VerifySignature onSignatureValidation={handleSignatureValidation} />
+                <VerifySignature
+                  onSignatureValidation={handleSignatureValidation}
+                />
 
                 {isSignatureValid && (
                   <CAlert color="success" className="mt-2">
@@ -81,7 +90,8 @@ const RetrieveFileFromIPFS: React.FC = () => {
                 )}
                 {!isSignatureValid && (
                   <CAlert color="danger" className="mt-2">
-                    Signature is not valid. Please verify the signature before downloading the file.
+                    Signature is not valid. Please verify the signature before
+                    downloading the file.
                   </CAlert>
                 )}
               </CCardBody>

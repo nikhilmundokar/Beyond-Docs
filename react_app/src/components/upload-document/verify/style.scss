@@ -25,45 +25,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: border-color 0.3s ease;
-
-    &.add-file {
-      align-items: flex-start;
-      justify-content: center;
-    }
-
-    &.drag-over {
-      border-color: $cyan;
-    }
-
-    .file-info {
-      font-size: 18px;
-      width: 100%;
-      margin: 10px;
-      background-color: $white;
-      display: flex;
-      align-items: center;
-      justify-content: space-evenly;
-
-      p {
-        margin-right: 10px;
-        color: $black;
-      }
-      svg {
-        font-size: 20px;
-        color: $black;
-      }
-      .cancel-icon {
-        cursor: pointer;
-        color: red;
-      }
-    }
-    .drag-info {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-    }
+    flex-direction: column;
     .icon {
       color: $cyan;
       font-size: 30px;
@@ -74,7 +36,6 @@
       color: gray;
     }
   }
-
   .ctas {
     display: flex;
     flex-direction: row;
