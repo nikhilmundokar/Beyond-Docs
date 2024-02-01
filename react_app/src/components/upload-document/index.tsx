@@ -1,32 +1,64 @@
 import React, { useRef, useState, ChangeEvent, DragEvent } from "react";
+import CryptoJS from "crypto-js";
+import axios from "axios";
+import Web3 from "web3";
 import "./style.scss";
+
 import CallToAction from "../common/calltoaction";
 import { FaDownload } from "react-icons/fa";
-import CryptoJS from 'crypto-js';
-import axios from 'axios';
-import Web3 from 'web3';
-import { CButton } from "@coreui/react";
-import { AiOutlineFile } from 'react-icons/ai';
+import { MdOutlineCancel } from "react-icons/md";
+import { FaRegFilePdf } from "react-icons/fa6";
 
-function UploadDocument({ isAuthenticated, userAddress }: { isAuthenticated: boolean; userAddress: string }) {
+function UploadDocument({
+  isAuthenticated,
+  userAddress,
+}: {
+  isAuthenticated: boolean;
+  userAddress: string;
+}) {
+  const [isDragOver, setDragOver] = useState(false);
+
+  const [fileInfo, setFileInfo] = useState<{
+    name: string;
+    type: string;
+    size: number;
+  } | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const JWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJlNWMzMDA1NC0zMDg5LTQ1ZGYtYmMzOS0yZGY2ZDJjYzc1NWIiLCJlbWFpbCI6InNzODQ2MTIxNkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiMGU0NTAyZGY5MWE3MmQwMzYzZDIiLCJzY29wZWRLZXlTZWNyZXQiOiJjY2VkMzAzOWNjNjQ0MDg1MWMzYjVjM2JhMzA3YzgxYWFhYjVjNjM0MDE1OTFhZjVlMjFmM2Y1MzI3OGFlODI4IiwiaWF0IjoxNzA0OTkwODQ0fQ.dlUWzFIj7JQ1WXthSmBkBOhYbRA4e2Yl5DgWTzILG7g'; // Replace with your actual Pinata JWT
+
+  const pinataJWT =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJlNWMzMDA1NC0zMDg5LTQ1ZGYtYmMzOS0yZGY2ZDJjYzc1NWIiLCJlbWFpbCI6InNzODQ2MTIxNkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiMGU0NTAyZGY5MWE3MmQwMzYzZDIiLCJzY29wZWRLZXlTZWNyZXQiOiJjY2VkMzAzOWNjNjQ0MDg1MWMzYjVjM2JhMzA3YzgxYWFhYjVjNjM0MDE1OTFhZjVlMjFmM2Y1MzI3OGFlODI4IiwiaWF0IjoxNzA0OTkwODQ0fQ.dlUWzFIj7JQ1WXthSmBkBOhYbRA4e2Yl5DgWTzILG7g";
+
   const [fileSignature, setFileSignature] = useState<string | null>(null);
-  const [uploadedFileInfo, setUploadedFileInfo] = useState<{ hash: string; size: number } | null>(null);
+
+  const [uploadedFileInfo, setUploadedFileInfo] = useState<{
+    hash: string;
+    size: number;
+  } | null>(null);
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     setSelectedFile(file || null);
-    setUploadedFileInfo(null); // Clear previous file information
+    setUploadedFileInfo(null);
     setFileSignature(null);
+    setFileInfo(
+      file ? { name: file.name, type: file.type, size: file.size } : null
+    );
   };
+
+  const handleCancel = () => {
+    setSelectedFile(null);
+    setFileInfo(null);
+  };
+
   const saveHashToFile = (hash: string) => {
     const fileContent = `${hash}`;
-    const blob = new Blob([fileContent], { type: 'text/plain' });
-    const link = document.createElement('a');
+    const blob = new Blob([fileContent], { type: "text/plain" });
+    const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = 'file.dat'; // Provide a name for your file with the .dll extension
+    link.download = "file.dat";
     link.click();
   };
 
@@ -43,7 +75,7 @@ function UploadDocument({ isAuthenticated, userAddress }: { isAuthenticated: boo
         const fileContent = event.target?.result as string;
         const signature = CryptoJS.SHA256(fileContent).toString();
         setFileSignature(signature);
-        saveHashToFile(signature)
+        saveHashToFile(signature);
       };
       reader.readAsText(selectedFile);
     }
@@ -52,23 +84,22 @@ function UploadDocument({ isAuthenticated, userAddress }: { isAuthenticated: boo
   const handleUpload = async () => {
     calculateFileSignature();
     if (!isAuthenticated) {
-      console.error('User not authenticated. Please connect with MetaMask.');
+      console.error("User not authenticated. Please connect with MetaMask.");
       return;
     }
 
     if (selectedFile && fileSignature) {
       const formData = new FormData();
-      formData.append('file', selectedFile);
-      formData.append('signature', fileSignature); // Include the signature in the form data
-
+      formData.append("file", selectedFile);
+      formData.append("signature", fileSignature);
       try {
         const response = await axios.post(
-          'https://api.pinata.cloud/pinning/pinFileToIPFS',
+          "https://api.pinata.cloud/pinning/pinFileToIPFS",
           formData,
           {
             headers: {
-              'Authorization': `Bearer ${JWT}`,
-              'Content-Type': 'multipart/form-data', // Set content type for file upload
+              Authorization: `Bearer ${pinataJWT}`,
+              "Content-Type": "multipart/form-data",
             },
           }
         );
@@ -76,43 +107,71 @@ function UploadDocument({ isAuthenticated, userAddress }: { isAuthenticated: boo
         const { IpfsHash, size } = response.data;
         setUploadedFileInfo({ hash: IpfsHash, size });
         saveHashToFile(IpfsHash);
-        const contractAddress = '0xd9145CCE52D386f254917e481eB44e9943F39138';
-        const UserDataStorageABI: any[] = [
-          // ... your ABI here
-        ]; // Replace with your contract address
-        const contract = new Web3.eth.Contract(UserDataStorageABI, contractAddress);
-        await contract.methods.setUserData(IpfsHash).send({ from: userAddress });
-        console.log('File uploaded successfully:', response.data);
+        const contractAddress = "";
+        const UserDataStorageABI: any[] = [];
+        const contract = new Web3.eth.Contract(
+          UserDataStorageABI,
+          contractAddress
+        );
+        await contract.methods
+          .setUserData(IpfsHash)
+          .send({ from: userAddress });
+        console.log("File uploaded successfully:", response.data);
       } catch (error) {
-        console.error('Error uploading file:', error);
+        console.error("Error uploading file:", error);
       }
     }
   };
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setDragOver(false);
   };
 
   const handleDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const file = event.dataTransfer.files?.[0];
     setSelectedFile(file || null);
+    setFileInfo(
+      file ? { name: file.name, type: file.type, size: file.size } : null
+    );
   };
 
   return (
     <>
       <div className="main-content">
-        <p className="text-center">Connected User: {userAddress}</p>
         <div className="title"> Please Select A Document To Upload </div>
+        <p className="text-center">Connected User: {userAddress}</p>
         <div
-          className="drag-document"
+          className={`drag-document ${isDragOver ? "drag-over" : ""} ${
+            fileInfo ? "add-file" : ""
+          }`}
           onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          <div className="icon">
-            <FaDownload />
-          </div>
-          <p>Select a file or drag here</p>
+          {selectedFile ? (
+            <div className="file-info">
+              <FaRegFilePdf />
+
+              <p>{fileInfo ? fileInfo.name : "No file selected"}</p>
+              <p>{fileInfo ? fileInfo.type : ""}</p>
+              <p>{fileInfo ? (fileInfo.size / 1024).toFixed(2) + " KB" : ""}</p>
+
+              <MdOutlineCancel className="cancel-icon" onClick={handleCancel} />
+            </div>
+          ) : (
+            <div className="drag-info">
+              <div className="icon">
+                <FaDownload />
+              </div>
+              <p>Select a file or drag here</p>
+            </div>
+          )}
           <input
             type="file"
             ref={fileInputRef}
@@ -120,6 +179,7 @@ function UploadDocument({ isAuthenticated, userAddress }: { isAuthenticated: boo
             style={{ display: "none" }}
           />
         </div>
+
         {isAuthenticated ? (
           <>
             {fileSignature && (
@@ -142,15 +202,19 @@ function UploadDocument({ isAuthenticated, userAddress }: { isAuthenticated: boo
             )}
           </>
         ) : (
-          <p className="text-center">Please connect with MetaMask to upload files.</p>
+          <p className="text-center">
+            Please connect with MetaMask to upload files.
+          </p>
         )}
+
         <div className="ctas">
           <CallToAction text="Browse" type="fill" action={handleBrowseClick} />
-          <CallToAction text="Digital signature" type="fill" action={calculateFileSignature} />
-          <CButton color="border" onClick={handleUpload}>
-            <AiOutlineFile className="mr-2" />
-            Upload File
-          </CButton>
+          <CallToAction
+            text="Digital signature"
+            type="fill"
+            action={calculateFileSignature}
+          />
+          <CallToAction text="Upload File" type="fill" action={handleUpload} />
         </div>
       </div>
     </>

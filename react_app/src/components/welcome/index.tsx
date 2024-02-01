@@ -1,14 +1,18 @@
+// Welcome.tsx
 import React from "react";
-import avatar from "./../../images/avatar_logo.png";
+import { BsPersonCircle } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 import "./style.scss";
 import CallToAction from "../common/calltoaction";
-import { BsPersonCircle } from "react-icons/bs";
 
 interface WelcomeProps {
   user: string;
+  onDisconnect: () => void;
 }
+
 function Welcome(props: WelcomeProps) {
-  const { user } = props;
+  const { user, onDisconnect } = props;
+  const navigate = useNavigate();
 
   return (
     <>
@@ -16,11 +20,20 @@ function Welcome(props: WelcomeProps) {
         <div className="avatar">
           <BsPersonCircle />
         </div>
-        <div className="title">Welcome To Beyond Docs {user} </div>
+        <div className="title">Welcome To Beyond Docs</div>
+
         <div className="ctas">
           <CallToAction text="Upload Document" type="fill" to="/upload" />
           <CallToAction text="Validate Document" type="border" to="/retrive" />
           <CallToAction text="View Dashboard" type="border" to="dashboard" />
+          <CallToAction
+            text="Disconnect"
+            action={() => {
+              onDisconnect();
+              navigate("/");
+            }}
+            type=""
+          />
         </div>
       </div>
     </>
