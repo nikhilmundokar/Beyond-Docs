@@ -67,12 +67,16 @@
           max-width: 80%;
         }
       }
-    }
-    .ctas {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
+      .ctas {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+
+        .cta-link {
+          text-decoration: none;
+        }
+      }
     }
 
     .right-col {

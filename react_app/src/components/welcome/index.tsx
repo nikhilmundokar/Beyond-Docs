@@ -1,18 +1,19 @@
-// Welcome.tsx
-import React from "react";
+import React, { useEffect } from "react";
 import { BsPersonCircle } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
-import "./style.scss";
 import CallToAction from "../common/calltoaction";
+import "./style.scss";
+import { useAuth } from "../utils/auth-context";
+import { useNavigate } from "react-router-dom";
 
-interface WelcomeProps {
-  user: string;
-  onDisconnect: () => void;
-}
-
-function Welcome(props: WelcomeProps) {
-  const { user, onDisconnect } = props;
+export default function Welcome() {
+  const { isConnected } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isConnected) {
+      navigate("/login");
+    }
+  }, [isConnected, navigate]);
 
   return (
     <>
@@ -23,21 +24,11 @@ function Welcome(props: WelcomeProps) {
         <div className="title">Welcome To Beyond Docs</div>
 
         <div className="ctas">
-          <CallToAction text="Upload Document" type="fill" to="/upload" />
+          <CallToAction text="Upload Document" type="border" to="/upload" />
           <CallToAction text="Validate Document" type="border" to="/retrive" />
           <CallToAction text="View Dashboard" type="border" to="dashboard" />
-          <CallToAction
-            text="Disconnect"
-            action={() => {
-              onDisconnect();
-              navigate("/");
-            }}
-            type=""
-          />
         </div>
       </div>
     </>
   );
 }
-
-export default Welcome;

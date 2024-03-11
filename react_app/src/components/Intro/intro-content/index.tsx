@@ -38,12 +38,13 @@ function IntroContent() {
             maxime earum sint nam consequatur soluta? Laborum, doloremque
             deserunt. Velit sapiente ipsa inventore.
           </p>
+
           <div className="ctas">
             <Link to="/login" className="cta-link">
               <CallToAction text="Signup" type="fill" />
             </Link>
             <Link to="/login" className="cta-link">
-              <CallToAction text="Login" to="/login" type="border" />
+              <CallToAction text="Login" type="border" />
             </Link>
           </div>
         </div>

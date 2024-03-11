@@ -14,15 +14,13 @@
   position: relative;
   color: $white;
   border: 2px solid $white;
-
+  text-decoration: none;
+  @include typography(18px, 500, 1);
   &.fill {
     background-color: $white;
     color: $black;
   }
   &:hover {
     opacity: 0.6;
-  }
-  .text {
-    @include typography(18px, 500, 1);
   }
 }
