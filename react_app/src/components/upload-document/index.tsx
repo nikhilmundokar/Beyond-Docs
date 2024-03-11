@@ -1,4 +1,4 @@
-import React, { useRef, useState, ChangeEvent, DragEvent } from "react";
+import { useRef, useState, ChangeEvent, DragEvent } from "react";
 import CryptoJS from "crypto-js";
 import axios from "axios";
 import Web3 from "web3";
@@ -20,7 +20,6 @@ function UploadDocument({
 
   const [fileInfo, setFileInfo] = useState<{
     name: string;
-    type: string;
     size: number;
   } | null>(null);
 
@@ -28,58 +27,12 @@ function UploadDocument({
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const pinataJWT =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJlNWMzMDA1NC0zMDg5LTQ1ZGYtYmMzOS0yZGY2ZDJjYzc1NWIiLCJlbWFpbCI6InNzODQ2MTIxNkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJpZCI6IkZSQTEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX0seyJpZCI6Ik5ZQzEiLCJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MX1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiMGU0NTAyZGY5MWE3MmQwMzYzZDIiLCJzY29wZWRLZXlTZWNyZXQiOiJjY2VkMzAzOWNjNjQ0MDg1MWMzYjVjM2JhMzA3YzgxYWFhYjVjNjM0MDE1OTFhZjVlMjFmM2Y1MzI3OGFlODI4IiwiaWF0IjoxNzA0OTkwODQ0fQ.dlUWzFIj7JQ1WXthSmBkBOhYbRA4e2Yl5DgWTzILG7g";
-
   const [fileSignature, setFileSignature] = useState<string | null>(null);
 
   const [uploadedFileInfo, setUploadedFileInfo] = useState<{
     hash: string;
     size: number;
   } | null>(null);
-
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    setSelectedFile(file || null);
-    setUploadedFileInfo(null);
-    setFileSignature(null);
-    setFileInfo(
-      file ? { name: file.name, type: file.type, size: file.size } : null
-    );
-  };
-
-  const handleCancel = () => {
-    setSelectedFile(null);
-    setFileInfo(null);
-  };
-
-  const saveHashToFile = (hash: string) => {
-    const fileContent = `${hash}`;
-    const blob = new Blob([fileContent], { type: "text/plain" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "file.dat";
-    link.click();
-  };
-
-  const handleBrowseClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const calculateFileSignature = () => {
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const fileContent = event.target?.result as string;
-        const signature = CryptoJS.SHA256(fileContent).toString();
-        setFileSignature(signature);
-        saveHashToFile(signature);
-      };
-      reader.readAsText(selectedFile);
-    }
-  };
 
   const handleUpload = async () => {
     calculateFileSignature();
@@ -98,7 +51,7 @@ function UploadDocument({
           formData,
           {
             headers: {
-              Authorization: `Bearer ${pinataJWT}`,
+              Authorization: `Bearer ${process.env.PINATA_KEY}`,
               "Content-Type": "multipart/form-data",
             },
           }
@@ -123,6 +76,44 @@ function UploadDocument({
     }
   };
 
+  const calculateFileSignature = () => {
+    if (selectedFile) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const fileContent = event.target?.result as string;
+        const signature = CryptoJS.SHA256(fileContent).toString();
+        setFileSignature(signature);
+        saveHashToFile(signature);
+      };
+      reader.readAsText(selectedFile);
+    }
+  };
+
+  const saveHashToFile = (hash: string) => {
+    const fileContent = `${hash}`;
+    const blob = new Blob([fileContent], { type: "text/plain" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "file.dat";
+    link.click();
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    setSelectedFile(file || null);
+    setUploadedFileInfo(null);
+    setFileSignature(null);
+    setFileInfo(
+      file ? { name: file.name, type: file.type, size: file.size } : null
+    );
+  };
+
+  const handleBrowseClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setDragOver(true);
@@ -141,11 +132,15 @@ function UploadDocument({
     );
   };
 
+  const handleCancel = () => {
+    setSelectedFile(null);
+    setFileInfo(null);
+  };
+
   return (
     <>
       <div className="main-content">
         <div className="title"> Please Select A Document To Upload </div>
-        <p className="text-center">Connected User: {userAddress}</p>
         <div
           className={`drag-document ${isDragOver ? "drag-over" : ""} ${
             fileInfo ? "add-file" : ""
@@ -158,9 +153,10 @@ function UploadDocument({
             <div className="file-info">
               <FaRegFilePdf />
 
-              <p>{fileInfo ? fileInfo.name : "No file selected"}</p>
-              <p>{fileInfo ? fileInfo.type : ""}</p>
-              <p>{fileInfo ? (fileInfo.size / 1024).toFixed(2) + " KB" : ""}</p>
+              <span>{fileInfo ? fileInfo.name : "No file selected"}</span>
+              <span>
+                {fileInfo ? (fileInfo.size / 1024).toFixed(2) + " KB" : ""}
+              </span>
 
               <MdOutlineCancel className="cancel-icon" onClick={handleCancel} />
             </div>
@@ -202,18 +198,12 @@ function UploadDocument({
             )}
           </>
         ) : (
-          <p className="text-center">
-            Please connect with MetaMask to upload files.
-          </p>
+          <></>
         )}
 
         <div className="ctas">
           <CallToAction text="Browse" type="fill" action={handleBrowseClick} />
-          <CallToAction
-            text="Digital signature"
-            type="fill"
-            action={calculateFileSignature}
-          />
+
           <CallToAction text="Upload File" type="fill" action={handleUpload} />
         </div>
       </div>

@@ -1,23 +1,17 @@
+//Navbar.tsx
+
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../utils/auth-context";
 import { scrollToSection } from "../utils/helper";
-import { BsPersonCircle } from "react-icons/bs";
-import { useAuth } from "../utils/context";
+import Login from "../login";
 import CallToAction from "../common/calltoaction";
 import logo from "../../images/BEYOND-DOCS.png";
-import { Link } from "react-router-dom";
-import Login from "../login/login";
+import { BsPersonCircle } from "react-icons/bs";
 import "./style.scss";
+import { checkConnection } from "../utils/auth-utils";
+
 function Navbar() {
-  const { isLoggedIn, login, logout } = useAuth();
-
-  const handleLogin = () => {
-    login();
-  };
-
-  const handleLogout = () => {
-    logout();
-  };
-
   const [scrolled, setScrolled] = useState(false);
   const handleScroll = () => {
     const offset = window.scrollY;
@@ -35,6 +29,13 @@ function Navbar() {
     };
   }, []);
 
+  const { isConnected, setIsConnected, setUserAddress, setLoading } = useAuth();
+
+  useEffect(() => {
+    console.log("Navbar useEffect called");
+    checkConnection(setIsConnected, setUserAddress, setLoading);
+  }, [checkConnection, setUserAddress, setLoading]);
+
   return (
     <div className={`top-navigation-bar ${scrolled ? "sticky-navbar" : ""}`}>
       <div className="navigation-content">
@@ -47,15 +48,24 @@ function Navbar() {
         </div>
         <div className="right-col">
           <div className="navigation">
-            {isLoggedIn ? (
+            {isConnected ? (
               <>
-                <span className="navigation-item" to="/upload">
+                <Link to="/upload" className="navigation-item">
                   Upload Document
-                </span>
-                <span className="navigation-item">Dashboard</span>
-                <span className="navigation-item">Help</span>
+                </Link>
+
+                <Link to="/dashboard" className="navigation-item">
+                  Dashboard
+                </Link>
+
+                <Link to="/help" className="navigation-item">
+                  Help
+                </Link>
+
                 <div className="avatar-icon">
-                  <BsPersonCircle />
+                  <Link to="/welcome" className="avatar-icon">
+                    <BsPersonCircle />
+                  </Link>
                 </div>
               </>
             ) : (
@@ -78,6 +88,7 @@ function Navbar() {
                 >
                   Contact
                 </span>
+
                 <Link to="/login" className="cta-link">
                   <CallToAction text="login" type="fill" />
                 </Link>

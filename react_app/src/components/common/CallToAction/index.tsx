@@ -1,7 +1,7 @@
 import React, { MouseEventHandler, ReactNode } from "react";
 import { Link } from "react-router-dom";
 import "./style.scss";
-import { useAuth } from "../../utils/context";
+import { useAuth } from "../../utils/auth-context";
 
 interface CallToActionProps {
   text: string;
@@ -21,7 +21,7 @@ const CallToAction: React.FC<CallToActionProps> = ({
   if (to) {
     return (
       <Link to={to} className={`call-to-action ${type ? type : `border`}`}>
-        <span className="text">{text}</span>
+        {text}
       </Link>
     );
   }

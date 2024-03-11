@@ -2,6 +2,7 @@
 @import "../../style-config/mixins.scss";
 
 .top-navigation-bar {
+  text-decoration: none !important;
   width: 100%;
   background-color: $black;
   color: $white;
@@ -47,6 +48,8 @@
           justify-content: space-evenly;
         }
         .navigation-item {
+          text-decoration: none;
+          color: $white;
           @include typography(14px, 400, 1);
           display: none;
           @include medium-screen {
@@ -61,7 +64,9 @@
             color: $black;
           }
         }
-
+        .cta-link {
+          text-decoration: none;
+        }
         .avatar-icon {
           height: 30px;
           width: 30px;

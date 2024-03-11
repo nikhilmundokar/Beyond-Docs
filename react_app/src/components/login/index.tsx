@@ -1,13 +1,15 @@
-// Login.tsx
+//login.tsx
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { checkConnection, handleConnect } from "../utils/auth-utils";
 import Welcome from "../welcome";
 import CallToAction from "../common/calltoaction";
 import "./style.scss";
 
-interface LoginProps {
+type LoginProps = {
   onAuthenticate: (address: string) => void;
-}
+};
 
 const Login: React.FC<LoginProps> = ({ onAuthenticate }) => {
   const [isConnected, setIsConnected] = useState(false);
@@ -15,74 +17,25 @@ const Login: React.FC<LoginProps> = ({ onAuthenticate }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const loginHandler = async () => {
+    await handleConnect(
+      setIsConnected,
+      setUserAddress,
+      onAuthenticate,
+      navigate
+    );
+  };
+
+  const handleConnectWrapper: React.MouseEventHandler<HTMLDivElement> = async (
+    event
+  ) => {
+    await loginHandler();
+  };
   useEffect(() => {
-    checkConnection();
-  }, []);
+    checkConnection(setIsConnected, setUserAddress, setLoading);
+  }, [setIsConnected, setUserAddress, setLoading]);
 
-  const checkConnection = async () => {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_accounts",
-        });
-
-        if (accounts.length > 0) {
-          setIsConnected(true);
-          setUserAddress(accounts[0]);
-        } else {
-          setIsConnected(false);
-          setUserAddress(null);
-        }
-      } catch (error) {
-        console.error("Error checking MetaMask connection:", error.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
-  const handleConnect = async () => {
-    if (window.ethereum) {
-      try {
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-        const accounts = await window.ethereum.request({
-          method: "eth_accounts",
-        });
-
-        if (accounts.length > 0) {
-          setIsConnected(true);
-          setUserAddress(accounts[0]);
-          onAuthenticate(accounts[0]);
-
-          // Navigate to the "/welcome" route
-          navigate("/welcome");
-        } else {
-          console.error("MetaMask connection failed.");
-        }
-      } catch (error) {
-        console.error("Error connecting to MetaMask:", error.message);
-      }
-    } else {
-      console.error(
-        "MetaMask not found. Please install MetaMask or another Ethereum provider."
-      );
-    }
-  };
-
-  const handleDisconnect = async () => {
-    if (window.ethereum) {
-      try {
-        await window.ethereum.request({ method: "eth_logout" });
-        setIsConnected(false);
-        setUserAddress(null);
-        navigate("/");
-      } catch (error) {
-        console.error("Error disconnecting from MetaMask:", error.message);
-      }
-    }
-  };
-
-  const handleDownload = async () => {
+  const handleDownload = () => {
     window.open("https://metamask.io/download.html", "_blank");
   };
 
@@ -92,7 +45,7 @@ const Login: React.FC<LoginProps> = ({ onAuthenticate }) => {
         <div className="main-content">
           {!loading ? (
             isConnected ? (
-              <Welcome user={userAddress} onDisconnect={handleDisconnect} />
+              <Welcome user={userAddress} />
             ) : (
               <>
                 <div className="title">
@@ -107,7 +60,7 @@ const Login: React.FC<LoginProps> = ({ onAuthenticate }) => {
                   />
                   <CallToAction
                     text="Connect with MetaMask"
-                    action={handleConnect}
+                    action={handleConnectWrapper}
                     type="fill"
                   />
                 </div>
