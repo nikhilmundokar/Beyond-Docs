@@ -1,0 +1,44 @@
+@import "../../../style-config/mixins.scss",
+  "../../../style-config/variable.scss";
+
+.main-content {
+  width: 100%;
+  min-height: 100vh;
+  height: fit-content;
+  background-color: $black-light;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  .header {
+    width: 60%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 20px;
+
+    .title {
+      width: 60%;
+      color: $white;
+      display: flex;
+      align-items: flex-start;
+      @include typography(30px, 700, 1);
+    }
+
+    .options {
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+    }
+  }
+
+  .document-preview {
+    width: 70%;
+    height: fit-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
